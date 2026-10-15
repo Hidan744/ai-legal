@@ -258,7 +258,56 @@ export function ContractsPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* До 2xl (большинство ноутбучных экранов, включая 1280/1366/1440) 10-колоночная таблица
+          с сайдбаром не влезает без нечитаемого сжатия или скролла — вместо неё карточки с теми
+          же данными. Полную таблицу показываем только на широких/2xl+ экранах. */}
+      <div className="2xl:hidden space-y-3">
+        {rows.map(({ contract, deadline, riskCount }) => {
+          const counterparty = counterpartyById.get(contract.counterpartyId)
+          return (
+            <div key={contract.id} className="rounded-xl border border-ink-800 bg-ink-900/40 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-ink-100 truncate" title={contract.title}>{contract.title}</div>
+                  <div className="flex items-center gap-1.5 mt-1 min-w-0">
+                    <span className="text-xs text-ink-400 truncate max-w-40" title={counterparty?.name}>{counterparty?.name ?? '—'}</span>
+                    {counterparty && <CategoryBadge category={counterparty.category} />}
+                  </div>
+                </div>
+                <ContractStatusBadge status={contract.status} />
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-ink-500">
+                <span>{CONTRACT_TYPE_LABELS[contract.type]}</span>
+                <span>{contract.endDate ? new Date(contract.endDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: '2-digit' }) : 'Бессрочный'}</span>
+              </div>
+
+              {deadline && (
+                <div className="flex items-center justify-between">
+                  <UrgencyBadge urgency={deadline.urgency} />
+                  <span className="text-[11px] text-ink-500">
+                    {deadline.urgency === 'passed'
+                      ? `просрочено на ${Math.abs(Math.round(deadline.daysUntilDeadline))} дн.`
+                      : `осталось ${Math.round(deadline.daysUntilDeadline)} дн.`}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-2 border-t border-ink-800/60">
+                <span className="text-sm font-semibold text-ink-100">{formatCurrency(contract.value)}</span>
+                <div className="flex items-center gap-2.5 text-xs">
+                  {contract.autoRenew && <span className="text-warning-500">Автопрод.</span>}
+                  {riskCount > 0 && <span className="text-warning-500 font-medium">Риски: {riskCount}</span>}
+                  <SourceBadge source={contract.source} />
+                </div>
+              </div>
+            </div>
+          )
+        })}
+        {rows.length === 0 && <Card className="p-8 text-center text-sm text-ink-500">Нет договоров по выбранным фильтрам</Card>}
+      </div>
+
+      <Card className="hidden 2xl:block">
         <CardContent className="overflow-x-auto p-0">
           <table className="w-full text-sm">
             <thead>
