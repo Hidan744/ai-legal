@@ -145,7 +145,7 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     endOffsetDays: 9,
     autoRenew: true,
     renewalNoticePeriodDays: 30,
-    value: 1_850_000,
+    value: 2_400_000,
     status: 'expiring_soon',
   })
   addRiskClause(
@@ -204,11 +204,11 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     title: 'Поставка гранулята ПВД',
     type: 'supply',
     startDaysAgo: 150,
-    endOffsetDays: 5,
+    endOffsetDays: 50,
     autoRenew: true,
     renewalNoticePeriodDays: 21,
     value: 2_250_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
   addRiskClause(plastpromMain, 'unlimited_liability', 'critical', 'В договоре отсутствует пункт об ограничении ответственности — риск неограниченных убытков при браке партии.')
   addRiskClause(plastpromMain, 'no_force_majeure', 'serious', 'Пункт о форс-мажоре сформулирован расплывчато, не покрывает перебои поставок у субподрядчиков контрагента.')
@@ -231,11 +231,11 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     title: 'Дистрибуция упаковки для розничных сетей',
     type: 'supply',
     startDaysAgo: 300,
-    endOffsetDays: 12,
+    endOffsetDays: 70,
     autoRenew: true,
     renewalNoticePeriodDays: 30,
     value: 3_400_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
   addRiskClause(optorg1, 'penalty', 'warning', 'Штраф за недопоставку объёма — 1% от суммы недопоставленной партии за каждый день, без верхнего предела.')
 
@@ -281,11 +281,11 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     title: 'Регулярные поставки в сеть магазинов',
     type: 'supply',
     startDaysAgo: 260,
-    endOffsetDays: 20,
+    endOffsetDays: 40,
     autoRenew: true,
     renewalNoticePeriodDays: 30,
     value: 2_780_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
   addRiskClause(torgsetMain, 'unilateral_termination', 'serious', 'Контрагент вправе расторгнуть договор без штрафных санкций при задержке поставки более 3 дней — несимметрично нашим обязательствам.')
 
@@ -332,11 +332,11 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     title: 'ИТ-сопровождение учётной системы',
     type: 'services',
     startDaysAgo: 220,
-    endOffsetDays: 8,
+    endOffsetDays: 45,
     autoRenew: true,
     renewalNoticePeriodDays: 30,
     value: 890_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
   addRiskClause(itserviceMain, 'unlimited_liability', 'warning', 'Ответственность подрядчика за ошибки в системе ограничена суммой одного ежемесячного платежа — несоразмерно возможным убыткам от простоя.')
 
@@ -373,9 +373,9 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     startDaysAgo: 540,
     endOffsetDays: 35,
     autoRenew: true,
-    renewalNoticePeriodDays: 60,
+    renewalNoticePeriodDays: 14,
     value: 4_320_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
   addRiskClause(bizparkMain, 'penalty', 'good', 'Штрафные санкции симметричны для обеих сторон — риск умеренный, типовое условие.')
 
@@ -386,9 +386,9 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     startDaysAgo: 540,
     endOffsetDays: 35,
     autoRenew: true,
-    renewalNoticePeriodDays: 60,
+    renewalNoticePeriodDays: 14,
     value: 180_000,
-    status: 'expiring_soon',
+    status: 'active',
   })
 
   const officeMain = addContract({
@@ -402,7 +402,7 @@ export function buildDemoWorkspace(now: Date = new Date()): DemoWorkspace {
     value: 2_640_000,
     status: 'active',
   })
-  addRiskClause(officeMain, 'unilateral_termination', 'critical', 'Арендодатель вправе расторгнуть договор в одностороннем порядке с уведомлением за 14 дней, в том числе без нарушения со стороны арендатора.')
+  addRiskClause(officeMain, 'unilateral_termination', 'serious', 'Арендодатель вправе расторгнуть договор в одностороннем порядке с уведомлением за 14 дней, в том числе без нарушения со стороны арендатора.')
 
   addContract({
     counterpartyKey: 'officecenter',
