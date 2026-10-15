@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ArrowDownUp, FileText, ShieldAlert, Wallet } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
@@ -17,6 +18,19 @@ import { CONTRACT_TYPE_LABELS, type ContractType, type CounterpartyCategory } fr
 const ALL = '__all__'
 
 type SortKey = 'title' | 'counterparty' | 'type' | 'endDate' | 'deadline' | 'autoRenew' | 'value' | 'status' | 'riskCount'
+
+const SORT_LABELS: Record<SortKey, string> = {
+  title: 'Договору',
+  counterparty: 'Контрагенту',
+  type: 'Типу',
+  endDate: 'Дате окончания',
+  deadline: 'Дедлайну уведомления',
+  autoRenew: 'Автопролонгации',
+  value: 'Сумме',
+  status: 'Статусу',
+  riskCount: 'Числу рисков',
+}
+const SORT_KEYS = Object.keys(SORT_LABELS) as SortKey[]
 
 type ChipFilter = 'all' | 'passed' | 'urgent' | 'thisMonth' | 'autoRenew' | 'big'
 
@@ -169,14 +183,6 @@ export function ContractsPage() {
     nowMs,
   ])
 
-  function toggleSort(key: SortKey) {
-    if (sortKey === key) setSortDesc((d) => !d)
-    else {
-      setSortKey(key)
-      setSortDesc(false)
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -197,7 +203,7 @@ export function ContractsPage() {
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {CHIPS.map((c) => (
           <button
             key={c.key}
@@ -211,6 +217,20 @@ export function ContractsPage() {
             {c.label}
           </button>
         ))}
+
+        <div className="ml-auto flex items-center gap-1.5">
+          <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+            <SelectTrigger className="w-44 h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {SORT_KEYS.map((key) => (
+                <SelectItem key={key} value={key}>По {SORT_LABELS[key]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button type="button" variant="outline" size="sm" className="h-8 px-2" onClick={() => setSortDesc((d) => !d)} title={sortDesc ? 'По убыванию' : 'По возрастанию'}>
+            <ArrowDownUp className={cn('size-3.5', sortDesc && 'rotate-180')} />
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -258,10 +278,10 @@ export function ContractsPage() {
         </CardContent>
       </Card>
 
-      {/* До 2xl (большинство ноутбучных экранов, включая 1280/1366/1440) 10-колоночная таблица
-          с сайдбаром не влезает без нечитаемого сжатия или скролла — вместо неё карточки с теми
-          же данными. Полную таблицу показываем только на широких/2xl+ экранах. */}
-      <div className="2xl:hidden space-y-3">
+      {/* Карточки вместо таблицы на любом экране — 10-колоночная таблица с сайдбаром не влезает
+          без нечитаемого сжатия или скролла ни на одной разумной ширине. Сортировка — через
+          контрол над списком (см. выше), а не по клику на заголовок колонки. */}
+      <div className="space-y-3">
         {rows.map(({ contract, deadline, riskCount }) => {
           const counterparty = counterpartyById.get(contract.counterpartyId)
           return (
@@ -306,104 +326,6 @@ export function ContractsPage() {
         })}
         {rows.length === 0 && <Card className="p-8 text-center text-sm text-ink-500">Нет договоров по выбранным фильтрам</Card>}
       </div>
-
-      <Card className="hidden 2xl:block">
-        <CardContent className="overflow-x-auto p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-ink-500 border-b border-ink-800">
-                <SortableHeader label="Договор" active={sortKey === 'title'} desc={sortDesc} onClick={() => toggleSort('title')} align="left" tight />
-                <SortableHeader label="Контрагент" active={sortKey === 'counterparty'} desc={sortDesc} onClick={() => toggleSort('counterparty')} align="left" tight />
-                <SortableHeader label="Тип" active={sortKey === 'type'} desc={sortDesc} onClick={() => toggleSort('type')} align="left" tight />
-                <SortableHeader label="Окончание" active={sortKey === 'endDate'} desc={sortDesc} onClick={() => toggleSort('endDate')} tight />
-                <SortableHeader label="Дедлайн" active={sortKey === 'deadline'} desc={sortDesc} onClick={() => toggleSort('deadline')} tight />
-                <SortableHeader label="Автопрод." active={sortKey === 'autoRenew'} desc={sortDesc} onClick={() => toggleSort('autoRenew')} tight />
-                <SortableHeader label="Сумма" active={sortKey === 'value'} desc={sortDesc} onClick={() => toggleSort('value')} tight />
-                <SortableHeader label="Статус" active={sortKey === 'status'} desc={sortDesc} onClick={() => toggleSort('status')} align="left" tight />
-                <SortableHeader label="Риски" active={sortKey === 'riskCount'} desc={sortDesc} onClick={() => toggleSort('riskCount')} tight />
-                <th className="py-3 px-2 font-medium text-left">Источник</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ contract, deadline, riskCount }) => {
-                const counterparty = counterpartyById.get(contract.counterpartyId)
-                return (
-                  <tr key={contract.id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-900/40">
-                    <td className="py-3 px-3 text-ink-100 max-w-36 truncate" title={contract.title}>{contract.title}</td>
-                    <td className="py-3 px-2 text-ink-300">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="truncate max-w-28" title={counterparty?.name}>{counterparty?.name ?? '—'}</span>
-                        {counterparty && <CategoryBadge category={counterparty.category} />}
-                      </div>
-                    </td>
-                    <td className="py-3 px-2 text-ink-300 whitespace-nowrap">{CONTRACT_TYPE_LABELS[contract.type]}</td>
-                    <td className="py-3 px-2 text-right text-ink-300 whitespace-nowrap">
-                      {contract.endDate ? new Date(contract.endDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: '2-digit' }) : 'Бессрочный'}
-                    </td>
-                    <td className="py-3 px-2 text-right whitespace-nowrap">
-                      {deadline ? (
-                        <div className="flex flex-col items-end gap-1">
-                          <UrgencyBadge urgency={deadline.urgency} />
-                          <span className="text-[11px] text-ink-500">
-                            {deadline.urgency === 'passed'
-                              ? `просрочено на ${Math.abs(Math.round(deadline.daysUntilDeadline))} дн.`
-                              : `осталось ${Math.round(deadline.daysUntilDeadline)} дн.`}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-ink-600">—</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-2 text-right whitespace-nowrap">
-                      <span className={cn(contract.autoRenew ? 'text-warning-500' : 'text-ink-400')}>{contract.autoRenew ? 'Да' : 'Нет'}</span>
-                    </td>
-                    <td className="py-3 px-2 text-right text-ink-100 font-medium whitespace-nowrap">{formatCurrency(contract.value)}</td>
-                    <td className="py-3 px-2"><ContractStatusBadge status={contract.status} /></td>
-                    <td className="py-3 px-2 text-right whitespace-nowrap">
-                      <span className={cn(riskCount > 0 ? 'text-warning-500 font-medium' : 'text-ink-500')}>{riskCount}</span>
-                    </td>
-                    <td className="py-3 px-2"><SourceBadge source={contract.source} /></td>
-                  </tr>
-                )
-              })}
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={10} className="py-8 text-center text-ink-500">Нет договоров по выбранным фильтрам</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
     </div>
-  )
-}
-
-function SortableHeader({
-  label,
-  active,
-  desc,
-  onClick,
-  align = 'right',
-  tight = false,
-}: {
-  label: string
-  active: boolean
-  desc: boolean
-  onClick: () => void
-  align?: 'left' | 'right'
-  tight?: boolean
-}) {
-  return (
-    <th className={cn('py-3 font-medium', tight ? 'px-2' : 'px-3', align === 'right' ? 'text-right' : 'text-left')}>
-      <button
-        type="button"
-        onClick={onClick}
-        className={cn('inline-flex items-center gap-1 hover:text-ink-200 whitespace-nowrap', active ? 'text-ink-200' : 'text-ink-500')}
-      >
-        {label}
-        <ArrowDownUp className={cn('size-3', active && desc && 'rotate-180')} />
-      </button>
-    </th>
   )
 }
