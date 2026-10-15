@@ -77,14 +77,6 @@ const CONTRACT_TITLE_BY_CATEGORY: Record<CounterpartyCategory, string[]> = {
   other: ['Договор оказания услуг'],
 }
 
-const TYPE_BY_CATEGORY: Record<CounterpartyCategory, ContractType> = {
-  supplier: 'supply',
-  client: 'supply',
-  contractor: 'works',
-  landlord: 'lease',
-  other: 'services',
-}
-
 /**
  * Демо-датасет компании «Полимер Трейд» — оптовая торговля полимерными материалами и
  * упаковкой, 12 контрагентов, ~28 договоров за последний год и ближайшие 12 месяцев вперёд.
