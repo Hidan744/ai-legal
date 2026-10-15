@@ -45,7 +45,7 @@ export const UPCOMING_THRESHOLD_DAYS = 60
 export type RenewalUrgency = 'passed' | 'urgent' | 'upcoming' | 'comfortable'
 
 export const RENEWAL_URGENCY_LABELS: Record<RenewalUrgency, string> = {
-  passed: 'Срок уведомления прошёл',
+  passed: 'Просрочено',
   urgent: 'Срочно',
   upcoming: 'Скоро',
   comfortable: 'В норме',

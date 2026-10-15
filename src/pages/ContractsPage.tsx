@@ -263,16 +263,16 @@ export function ContractsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-ink-500 border-b border-ink-800">
-                <SortableHeader label="Договор" active={sortKey === 'title'} desc={sortDesc} onClick={() => toggleSort('title')} align="left" />
-                <SortableHeader label="Контрагент" active={sortKey === 'counterparty'} desc={sortDesc} onClick={() => toggleSort('counterparty')} align="left" />
-                <SortableHeader label="Тип" active={sortKey === 'type'} desc={sortDesc} onClick={() => toggleSort('type')} align="left" />
-                <SortableHeader label="Дата окончания" active={sortKey === 'endDate'} desc={sortDesc} onClick={() => toggleSort('endDate')} />
-                <SortableHeader label="Дедлайн уведомления" active={sortKey === 'deadline'} desc={sortDesc} onClick={() => toggleSort('deadline')} />
-                <SortableHeader label="Автопрод." active={sortKey === 'autoRenew'} desc={sortDesc} onClick={() => toggleSort('autoRenew')} />
-                <SortableHeader label="Сумма" active={sortKey === 'value'} desc={sortDesc} onClick={() => toggleSort('value')} />
-                <SortableHeader label="Статус" active={sortKey === 'status'} desc={sortDesc} onClick={() => toggleSort('status')} align="left" />
-                <SortableHeader label="Риски" active={sortKey === 'riskCount'} desc={sortDesc} onClick={() => toggleSort('riskCount')} />
-                <th className="py-3 px-3 font-medium text-left">Источник</th>
+                <SortableHeader label="Договор" active={sortKey === 'title'} desc={sortDesc} onClick={() => toggleSort('title')} align="left" tight />
+                <SortableHeader label="Контрагент" active={sortKey === 'counterparty'} desc={sortDesc} onClick={() => toggleSort('counterparty')} align="left" tight />
+                <SortableHeader label="Тип" active={sortKey === 'type'} desc={sortDesc} onClick={() => toggleSort('type')} align="left" tight />
+                <SortableHeader label="Окончание" active={sortKey === 'endDate'} desc={sortDesc} onClick={() => toggleSort('endDate')} tight />
+                <SortableHeader label="Дедлайн" active={sortKey === 'deadline'} desc={sortDesc} onClick={() => toggleSort('deadline')} tight />
+                <SortableHeader label="Автопрод." active={sortKey === 'autoRenew'} desc={sortDesc} onClick={() => toggleSort('autoRenew')} tight />
+                <SortableHeader label="Сумма" active={sortKey === 'value'} desc={sortDesc} onClick={() => toggleSort('value')} tight />
+                <SortableHeader label="Статус" active={sortKey === 'status'} desc={sortDesc} onClick={() => toggleSort('status')} align="left" tight />
+                <SortableHeader label="Риски" active={sortKey === 'riskCount'} desc={sortDesc} onClick={() => toggleSort('riskCount')} tight />
+                <th className="py-3 px-2 font-medium text-left">Источник</th>
               </tr>
             </thead>
             <tbody>
@@ -280,18 +280,18 @@ export function ContractsPage() {
                 const counterparty = counterpartyById.get(contract.counterpartyId)
                 return (
                   <tr key={contract.id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-900/40">
-                    <td className="py-3 px-5 text-ink-100 max-w-56 truncate" title={contract.title}>{contract.title}</td>
-                    <td className="py-3 px-3 text-ink-300 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        {counterparty?.name ?? '—'}
+                    <td className="py-3 px-3 text-ink-100 max-w-36 truncate" title={contract.title}>{contract.title}</td>
+                    <td className="py-3 px-2 text-ink-300">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="truncate max-w-28" title={counterparty?.name}>{counterparty?.name ?? '—'}</span>
                         {counterparty && <CategoryBadge category={counterparty.category} />}
                       </div>
                     </td>
-                    <td className="py-3 px-3 text-ink-300 whitespace-nowrap">{CONTRACT_TYPE_LABELS[contract.type]}</td>
-                    <td className="py-3 px-3 text-right text-ink-300 whitespace-nowrap">
+                    <td className="py-3 px-2 text-ink-300 whitespace-nowrap">{CONTRACT_TYPE_LABELS[contract.type]}</td>
+                    <td className="py-3 px-2 text-right text-ink-300 whitespace-nowrap">
                       {contract.endDate ? new Date(contract.endDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: '2-digit' }) : 'Бессрочный'}
                     </td>
-                    <td className="py-3 px-3 text-right whitespace-nowrap">
+                    <td className="py-3 px-2 text-right whitespace-nowrap">
                       {deadline ? (
                         <div className="flex flex-col items-end gap-1">
                           <UrgencyBadge urgency={deadline.urgency} />
@@ -305,15 +305,15 @@ export function ContractsPage() {
                         <span className="text-ink-600">—</span>
                       )}
                     </td>
-                    <td className="py-3 px-3 text-right whitespace-nowrap">
+                    <td className="py-3 px-2 text-right whitespace-nowrap">
                       <span className={cn(contract.autoRenew ? 'text-warning-500' : 'text-ink-400')}>{contract.autoRenew ? 'Да' : 'Нет'}</span>
                     </td>
-                    <td className="py-3 px-3 text-right text-ink-100 font-medium whitespace-nowrap">{formatCurrency(contract.value)}</td>
-                    <td className="py-3 px-3"><ContractStatusBadge status={contract.status} /></td>
-                    <td className="py-3 px-3 text-right whitespace-nowrap">
+                    <td className="py-3 px-2 text-right text-ink-100 font-medium whitespace-nowrap">{formatCurrency(contract.value)}</td>
+                    <td className="py-3 px-2"><ContractStatusBadge status={contract.status} /></td>
+                    <td className="py-3 px-2 text-right whitespace-nowrap">
                       <span className={cn(riskCount > 0 ? 'text-warning-500 font-medium' : 'text-ink-500')}>{riskCount}</span>
                     </td>
-                    <td className="py-3 px-3"><SourceBadge source={contract.source} /></td>
+                    <td className="py-3 px-2"><SourceBadge source={contract.source} /></td>
                   </tr>
                 )
               })}
@@ -336,15 +336,17 @@ function SortableHeader({
   desc,
   onClick,
   align = 'right',
+  tight = false,
 }: {
   label: string
   active: boolean
   desc: boolean
   onClick: () => void
   align?: 'left' | 'right'
+  tight?: boolean
 }) {
   return (
-    <th className={cn('py-3 px-3 font-medium', align === 'right' ? 'text-right' : 'text-left')}>
+    <th className={cn('py-3 font-medium', tight ? 'px-2' : 'px-3', align === 'right' ? 'text-right' : 'text-left')}>
       <button
         type="button"
         onClick={onClick}
